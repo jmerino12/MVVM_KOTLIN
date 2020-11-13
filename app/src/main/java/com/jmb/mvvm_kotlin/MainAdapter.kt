@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.jmb.mvvm_kotlin.databinding.ItemRowBinding
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MainAdapter(private val context:Context):RecyclerView.Adapter<MainAdapter.MainViewHolder>(){
@@ -17,9 +18,10 @@ class MainAdapter(private val context:Context):RecyclerView.Adapter<MainAdapter.
         dataList = data
     }
 
+    //Agregando viewBinding al reciclyview
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_row,parent,false)
-        return MainViewHolder(view)
+        val viewBinding  = ItemRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MainViewHolder(viewBinding)
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
@@ -36,18 +38,20 @@ class MainAdapter(private val context:Context):RecyclerView.Adapter<MainAdapter.
     }
        //Inner class su ventaja es que estar dentro de la clase, esta es una clase hija de MainAdapter, cunaod su intancia muera tambien la
         //instancia su clase hija, ayuda al perfomance
-    inner class MainViewHolder(itemView:View):RecyclerView.ViewHolder(itemView) {
-           private lateinit var circleImage:CircleImageView
+
+    inner class MainViewHolder(private val viewBinding:ItemRowBinding):RecyclerView.ViewHolder(viewBinding.root) {
+           /*private lateinit var circleImage:CircleImageView
            private lateinit var title:TextView
-           private lateinit var description:TextView
-
-
+           private lateinit var description:TextView*/ //USANDO VIEWBIDING  -> se agrega private val para acceder
            fun bindView(user:Usuario){
-               title = itemView.findViewById(R.id.txt_title)
+                viewBinding.txtTitle.text = user.nombre
+               viewBinding.txtDesc.text = user.descripcion
+               Glide.with(context).load(user.imageUrl).into(viewBinding.circleImageView)
+               /*title = itemView.findViewById(R.id.txt_title)
                description = itemView.findViewById(R.id.txt_desc)
-               Glide.with(context).load(user.imageUrl).into(itemView.findViewById(R.id.circleImageView))
+               Glide.with(context).load(user.imageUrl).into(circleImage)
                title.text = user.nombre
-               description.text = user.descripcion
+               description.text = user.descripcion*/
 
         }
     }

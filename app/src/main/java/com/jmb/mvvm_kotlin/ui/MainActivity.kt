@@ -11,32 +11,35 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.jmb.mvvm_kotlin.MainAdapter
 import com.jmb.mvvm_kotlin.viewmodel.MainViewModel
 import com.jmb.mvvm_kotlin.R
+import com.jmb.mvvm_kotlin.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var recyclerView:RecyclerView
     private lateinit var adapter: MainAdapter
-    private lateinit var shimmer:ShimmerFrameLayout
     private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
+
+    private lateinit var binding: ActivityMainBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        recyclerView = findViewById(R.id.recyclerView)
-        shimmer = findViewById(R.id.shimmer_view_container)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
         adapter = MainAdapter(this)
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
 
         observeData()
 
     }
 
     fun observeData(){
-        shimmer.startShimmer()
+        binding.shimmerViewContainer.startShimmer()
         viewModel.fetchUserData().observe(this, Observer {
-            shimmer.stopShimmer()
-            shimmer.visibility = View.GONE
+            binding.shimmerViewContainer.stopShimmer()
+            binding.shimmerViewContainer.visibility = View.GONE
             adapter.setListData(it)
             adapter.notifyDataSetChanged()
         })
