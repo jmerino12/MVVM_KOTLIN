@@ -1,8 +1,10 @@
 package com.jmb.mvvm_kotlin.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +15,7 @@ import com.jmb.mvvm_kotlin.viewmodel.MainViewModel
 import com.jmb.mvvm_kotlin.R
 import com.jmb.mvvm_kotlin.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),MainAdapter.onImageClickListener {
     private lateinit var adapter: MainAdapter
     private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
 
@@ -26,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        adapter = MainAdapter(this)
+        adapter = MainAdapter(this,this)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
@@ -43,5 +45,15 @@ class MainActivity : AppCompatActivity() {
             adapter.setListData(it)
             adapter.notifyDataSetChanged()
         })
+    }
+
+    override fun onImageClick(imageUrl: String) {
+        val intent = Intent(this, ImageDetail::class.java)
+        intent.putExtra("imageUrl",imageUrl)
+        startActivity(intent)
+    }
+
+    override fun onItemClick(nombre: String) {
+        Toast.makeText(this, "El nombre de este item es $nombre", Toast.LENGTH_SHORT).show()
     }
 }

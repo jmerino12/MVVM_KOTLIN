@@ -2,17 +2,21 @@ package com.jmb.mvvm_kotlin
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.jmb.mvvm_kotlin.databinding.ItemRowBinding
-import de.hdodenhof.circleimageview.CircleImageView
 
-class MainAdapter(private val context:Context):RecyclerView.Adapter<MainAdapter.MainViewHolder>(){
+class MainAdapter(private val context:Context,
+                  private val itemClickListener:onImageClickListener):RecyclerView.Adapter<MainAdapter.MainViewHolder>(){
 
     private var dataList = mutableListOf<Usuario>()
+
+
+    interface onImageClickListener{
+        fun onImageClick(imageUrl: String)
+        fun onItemClick(nombre:String)
+    }
 
     fun setListData(data:MutableList<Usuario>){
         dataList = data
@@ -44,7 +48,9 @@ class MainAdapter(private val context:Context):RecyclerView.Adapter<MainAdapter.
            private lateinit var title:TextView
            private lateinit var description:TextView*/ //USANDO VIEWBIDING  -> se agrega private val para acceder
            fun bindView(user:Usuario){
-                viewBinding.txtTitle.text = user.nombre
+               viewBinding.root.setOnClickListener { itemClickListener.onItemClick(user.nombre) }
+               viewBinding.circleImageView.setOnClickListener { itemClickListener.onImageClick(user.imageUrl) }
+               viewBinding.txtTitle.text = user.nombre
                viewBinding.txtDesc.text = user.descripcion
                Glide.with(context).load(user.imageUrl).into(viewBinding.circleImageView)
                /*title = itemView.findViewById(R.id.txt_title)
